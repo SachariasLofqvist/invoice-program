@@ -1,28 +1,47 @@
 import { useState } from "react";
 import axios from "axios";
+import { useAuth } from "@clerk/clerk-react"; // VIKTIGT: Importera Clerk
 
+// VIKTIGT: Här måste { onClose, onInvoiceCreated } finnas med!
 export default function InvoiceForm({ onClose, onInvoiceCreated }) {
   const [title, setTitle] = useState("");
   const [number, setNumber] = useState("");
-  const [paymentTerms, setPaymentTerms] = useState("14 days");
+  const [paymentTerms, setPaymentTerms] = useState("14 dagar");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { getToken } = useAuth(); // Hämta nyckeln från Clerk
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
+      // 1. Använd dynamisk URL för att det ska fungera på Render
       const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
-      const response = await axios.post(`${API_URL}/api/invoices`, {
-        title,
-        number,
-        paymentTerms,
-      });
 
+      // 2. Hämta den hemliga inloggningsnyckeln
+      const token = await getToken();
+
+      // 3. Skicka anropet till din backend och bifoga nyckeln
+      const response = await axios.post(
+        `${API_URL}/api/invoices`,
+        {
+          title,
+          number,
+          paymentTerms,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      // 4. Skicka den skapade fakturan till Dashboard och stäng popupen
       onInvoiceCreated(response.data);
       onClose();
     } catch (error) {
-      console.error(error);
+      console.error("Kunde inte skapa faktura:", error);
       alert("Något gick fel när fakturan skulle sparas.");
     } finally {
       setIsSubmitting(false);
@@ -92,9 +111,9 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
               onChange={(e) => setPaymentTerms(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="14 days">14 dagar</option>
-              <option value="30 days">30 dagar</option>
-              <option value="60 days">60 dagar</option>
+              <option value="14 dagar">14 dagar</option>
+              <option value="30 dagar">30 dagar</option>
+              <option value="60 dagar">60 dagar</option>
             </select>
           </div>
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
 
 export default function InvoiceDetail() {
@@ -7,6 +8,7 @@ export default function InvoiceDetail() {
   const [invoice, setInvoice] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { getToken } = useAuth();
 
   // Tillstånd för att lägga till en ny rad (Item)
   const [itemTitle, setItemTitle] = useState("");
@@ -18,7 +20,10 @@ export default function InvoiceDetail() {
     const fetchInvoiceDetails = async () => {
       try {
         const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
-        const response = await axios.get(`${API_URL}/api/invoices/${id}`);
+        const token = await getToken();
+        const response = await axios.get(`${API_URL}/api/invoices/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setInvoice(response.data);
       } catch (err) {
         console.error(err);
@@ -35,11 +40,12 @@ export default function InvoiceDetail() {
     setIsAddingItem(true);
     try {
       const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
-      const response = await axios.post(`${API_URL}/api/invoices/${id}/items`, {
-        title: itemTitle,
-        quantity: itemQuantity,
-        unitPrice: itemPrice,
-      });
+      const token = await getToken();
+      const response = await axios.post(
+        `${API_URL}/api/invoices/${id}/items`,
+        { title: itemTitle, quantity: itemQuantity, unitPrice: itemPrice },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
 
       setInvoice({
         ...invoice,

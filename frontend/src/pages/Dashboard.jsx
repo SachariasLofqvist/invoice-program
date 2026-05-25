@@ -1,18 +1,27 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom"; // NY IMPORT: För att skapa länkar
-import InvoiceForm from "../components/InvoiceForm";
+import { Link } from "react-router-dom";
+import { useAuth } from "@clerk/clerk-react"; // <-- VIKTIGT: För säkerheten
+import InvoiceForm from "../components/InvoiceForm"; // <-- VIKTIGT: För att hitta din popup!
 
 export default function Dashboard() {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { getToken } = useAuth(); // Hämta nyckeln från Clerk
 
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
         const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
-        const response = await axios.get(`${API_URL}/api/invoices`);
+        const token = await getToken(); // Hämta säkerhetsnyckeln
+
+        // Skicka anropet till backenden MED nyckeln
+        const response = await axios.get(`${API_URL}/api/invoices`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setInvoices(response.data);
       } catch (error) {
         console.error("Kunde inte hämta fakturor:", error);
@@ -22,7 +31,7 @@ export default function Dashboard() {
     };
 
     fetchInvoices();
-  }, []);
+  }, [getToken]);
 
   const handleInvoiceCreated = (newInvoice) => {
     setInvoices([newInvoice, ...invoices]);
