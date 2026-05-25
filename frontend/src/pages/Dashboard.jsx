@@ -11,7 +11,8 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/invoices");
+        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+        const response = await axios.get(`${API_URL}/api/invoices`);
         setInvoices(response.data);
       } catch (error) {
         console.error("Kunde inte hämta fakturor:", error);

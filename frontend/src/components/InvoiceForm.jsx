@@ -12,7 +12,8 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/invoices", {
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+      const response = await axios.post(`${API_URL}/api/invoices`, {
         title,
         number,
         paymentTerms,
