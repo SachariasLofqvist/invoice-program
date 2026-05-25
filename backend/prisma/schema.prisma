@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id          Int       @id @default(autoincrement())
+  orgName     String?
+  orgNumber   String?
+  momsNumber  String?
+  firstName   String?
+  lastName    String?
+  phoneNumber String?
+  address     String?
+  city        String?
+  country     String?
+  mail        String?
+  uniqueId    String?   @default(uuid()) 
+  slug        String?   @unique
+  dateCreated DateTime  @default(now()) 
+  lastUpdated DateTime  @updatedAt      
+
+  invoices    Invoice[]
+}
+
+model Invoice {
+  id              Int       @id @default(autoincrement())
+  title           String?
+  number          String?
+  dueDate         DateTime?
+  paymentTerms    String    @default("14 days")
+  status          String    @default("CURRENT")
+  defaultInterest Int?
+  notes           String?
+  product         String?
+  rateField       Decimal   @default(0)
+  reff            String?
+  uniqueId        String?   @default(uuid())
+  slug            String?   @unique
+  dateCreated     DateTime  @default(now())
+  lastUpdated     DateTime  @updatedAt
+
+  // Relationer
+  clientId        Int?
+  client          Client?   @relation(fields: [clientId], references: [id])
+  items           Item[]
+}
+
+model Item {
+  id          Int     @id @default(autoincrement())
+  title       String?
+  quantity    Int     @default(1)
+  unitPrice   Decimal
+  netAmount   Decimal
+  description String?
+  
+  invoiceId   Int
+  invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+}
