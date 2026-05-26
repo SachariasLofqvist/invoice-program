@@ -10,7 +10,6 @@ export default function InvoiceDetail() {
   const [error, setError] = useState(null);
   const { getToken } = useAuth();
 
-  // Tillstånd för att lägga till en ny rad (Item)
   const [itemTitle, setItemTitle] = useState("");
   const [itemQuantity, setItemQuantity] = useState(1);
   const [itemPrice, setItemPrice] = useState("");
@@ -33,7 +32,7 @@ export default function InvoiceDetail() {
       }
     };
     fetchInvoiceDetails();
-  }, [id]);
+  }, [id, getToken]);
 
   const handleAddItem = async (e) => {
     e.preventDefault();
@@ -63,10 +62,14 @@ export default function InvoiceDetail() {
     }
   };
 
-  const calculateTotal = () => {
+  const calculateNetTotal = () => {
     if (!invoice?.items) return 0;
     return invoice.items.reduce((sum, item) => sum + Number(item.netAmount), 0);
   };
+
+  const netTotal = calculateNetTotal();
+  const vatAmount = netTotal * 0.25;
+  const grossTotal = netTotal + vatAmount;
 
   const handlePrint = () => {
     window.print();
@@ -86,191 +89,222 @@ export default function InvoiceDetail() {
       </div>
     );
 
+  const invoiceDate = new Date(invoice.dateCreated).toLocaleDateString("sv-SE");
+
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 print:bg-white print:py-0 print:px-0">
-      <div className="max-w-4xl mx-auto space-y-6 print:space-y-0">
-        {/* TOPPBAR: Döljs vid utskrift */}
-        <div className="flex justify-between items-center print:hidden">
-          <Link
-            to="/"
-            className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 transition-colors"
-          >
-            &larr; Tillbaka till översikten
-          </Link>
-          <button
-            onClick={handlePrint}
-            className="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-md font-semibold transition-colors shadow-sm cursor-pointer flex items-center gap-2"
-          >
-            Spara som PDF
-          </button>
+    <div className="bg-gray-200 min-h-screen py-8 print:py-0 print:bg-white text-sm">
+      
+      {/* TOPPBAR (Döljs vid utskrift) */}
+      <div className="max-w-[210mm] mx-auto mb-4 flex justify-between items-center print:hidden px-4 sm:px-0">
+        <Link
+          to="/"
+          className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 transition-colors"
+        >
+          &larr; Tillbaka till översikten
+        </Link>
+        <button
+          onClick={handlePrint}
+          className="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-md font-semibold transition-colors shadow-sm cursor-pointer"
+        >
+          Spara som PDF
+        </button>
+      </div>
+
+      {/* A4-Papperet */}
+      <div className="max-w-[210mm] mx-auto bg-white p-[20mm] shadow-lg min-h-[297mm] flex flex-col print:shadow-none print:p-0 print:m-0">
+        
+        {/* HEADER */}
+        <header className="flex justify-between items-start mb-12">
+          <div className="text-gray-600">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Williampfyra</h1>
+            <p>Din Adress 1</p>
+            <p>123 45 Din Stad</p>
+            <br />
+            <p>Org.nr: 556XXX-XXXX</p>
+            <p>Momsreg.nr: SE556XXXXXXX01</p>
+          </div>
+          
+          <div className="text-right text-gray-600">
+            <h2 className="text-4xl font-light text-gray-900 mb-6 tracking-wider">FAKTURA</h2>
+            
+            {/* Dynamisk Kundinfo (förberedd för databasen) */}
+            <div className="bg-gray-50 p-4 text-left inline-block border border-gray-100">
+              <h3 className="font-bold text-gray-900 mb-1">
+                {invoice.customerName || "Ny Kund AB"}
+              </h3>
+              <p className="whitespace-pre-wrap text-sm">
+                {invoice.customerAddress || "Kundgatan 1\n123 45 Staden"}
+              </p>
+              {invoice.customerOrgNr && (
+                <p className="mt-2 text-xs text-gray-500">Org.nr: {invoice.customerOrgNr}</p>
+              )}
+            </div>
+          </div>
+        </header>
+
+        {/* FAKTURADETALJER */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-12 border-b border-t border-gray-200 py-4">
+          <div>
+            <p className="text-gray-500 font-semibold text-xs uppercase">Fakturanummer</p>
+            <p className="font-medium text-gray-900">{invoice.number}</p>
+          </div>
+          <div>
+            <p className="text-gray-500 font-semibold text-xs uppercase">Fakturadatum</p>
+            <p className="font-medium text-gray-900">{invoiceDate}</p>
+          </div>
+          <div>
+            <p className="text-gray-500 font-semibold text-xs uppercase">Betalningsvillkor</p>
+            <p className="font-medium text-gray-900">{invoice.paymentTerms}</p>
+          </div>
+          <div>
+            <p className="text-gray-500 font-semibold text-xs uppercase">Förfallodag</p>
+            <p className="font-medium text-gray-900">{/* Lägg till logik för förfallodag här framöver om du vill */}</p>
+          </div>
+          <div>
+            <p className="text-gray-500 font-semibold text-xs uppercase">Dröjsmålsränta</p>
+            <p className="font-medium text-gray-900">8,00%</p>
+          </div>
+          <div>
+            <p className="text-gray-500 font-semibold text-xs uppercase">Köparens referens</p>
+            <p className="font-medium text-gray-900">{invoice.customerReference || "-"}</p>
+          </div>
         </div>
 
-        {/* FAKTURABLADET */}
-        <div className="bg-white shadow rounded-lg p-8 print:shadow-none print:p-12 print:border-none">
-          {/* Huvudhuvud */}
-          <div className="flex justify-between items-start border-b border-gray-200 pb-6 mb-6">
-            <div>
-              <div className="text-2xl font-black text-gray-900 tracking-tight mb-1 uppercase">
-                DITT FÖRETAG AB
-              </div>
-              <p className="text-xs text-gray-400">Ekonomiavdelningen</p>
+        {/* ARTIKELTABELL */}
+        <div className="flex mb-12">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b-2 border-gray-800 text-gray-800">
+                <th className="py-2 font-semibold">Beskrivning</th>
+                <th className="py-2 font-semibold text-center hidden sm:table-cell">Datum</th>
+                <th className="py-2 font-semibold text-right">Antal</th>
+                <th className="py-2 font-semibold text-center">Enhet</th>
+                <th className="py-2 font-semibold text-right">À pris</th>
+                <th className="py-2 font-semibold text-right">Moms %</th>
+                <th className="py-2 font-semibold text-right">Belopp</th>
+              </tr>
+            </thead>
+            <tbody className="text-gray-700">
+              {invoice.items && invoice.items.length > 0 ? (
+                invoice.items.map((item) => (
+                  <tr key={item.id} className="border-b border-gray-100">
+                    <td className="py-3">{item.title}</td>
+                    <td className="py-3 text-center hidden sm:table-cell">{invoiceDate}</td>
+                    <td className="py-3 text-right">{item.quantity}</td>
+                    <td className="py-3 text-center">st</td>
+                    <td className="py-3 text-right">{Number(item.unitPrice).toLocaleString("sv-SE", { minimumFractionDigits: 2 })} kr</td>
+                    <td className="py-3 text-right">25%</td>
+                    <td className="py-3 text-right font-medium">{Number(item.netAmount).toLocaleString("sv-SE", { minimumFractionDigits: 2 })} kr</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" className="py-8 text-center text-gray-400 italic">
+                    Inga rader har lagts till ännu.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* SUMMERING */}
+        <div className="flex justify-end mb-24">
+          <div className="w-full sm:w-1/2 md:w-1/3">
+            <div className="flex justify-between py-1 text-gray-600">
+              <span>Totalt exkl moms</span>
+              <span>{netTotal.toLocaleString("sv-SE", { minimumFractionDigits: 2 })} kr</span>
             </div>
-            <div className="text-right">
-              {/* STATUSBRICKAN ÄR BORTTAGEN! Kvar är bara rent fakturanummer */}
-              <p className="text-sm text-gray-500 font-mono">
-                Fakturanummer:{" "}
-                <span className="font-bold text-gray-900">
-                  {invoice.number}
-                </span>
-              </p>
+            <div className="flex justify-between py-1 text-gray-600">
+              <span>Moms 25,00%</span>
+              <span>{vatAmount.toLocaleString("sv-SE", { minimumFractionDigits: 2 })} kr</span>
+            </div>
+            <div className="flex justify-between py-3 mt-2 border-t-2 border-gray-800 font-bold text-lg text-gray-900">
+              <span>Summa att betala</span>
+              <span>{grossTotal.toLocaleString("sv-SE", { minimumFractionDigits: 2 })} kr</span>
             </div>
           </div>
+        </div>
 
-          {/* Metadata / Datum och Betalningsvillkor */}
-          <div className="grid grid-cols-2 gap-6 text-sm mb-6 bg-gray-50 p-4 rounded-md print:bg-transparent print:p-0 print:grid-cols-2">
-            <div>
-              <h3 className="font-semibold text-gray-400 uppercase tracking-wider text-xs">
-                Fakturadatum
-              </h3>
-              <p className="text-gray-900 font-medium mt-1">
-                {new Date(invoice.dateCreated).toLocaleDateString("sv-SE")}
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-400 uppercase tracking-wider text-xs">
-                Betalningsvillkor
-              </h3>
-              <p className="text-gray-900 font-medium mt-1">
-                {invoice.paymentTerms}
-              </p>
-            </div>
+        {/* FOOTER (Hårdkodad info) */}
+        <footer className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs text-gray-500 pt-8 border-t border-gray-200 mt-auto">
+          <div>
+            <p className="font-bold text-gray-700 mb-1">Williampfyra</p>
+            <p>Din Adress 1</p>
+            <p>123 45 Din Stad</p>
           </div>
-
-          {/* Sektion för Fakturarader */}
-          <div className="border-t border-gray-200 pt-8">
-            <h2 className="text-lg font-bold text-gray-800 mb-4 print:text-base">
-              Specifikation
-            </h2>
-
-            {invoice.items && invoice.items.length > 0 ? (
-              <div className="border border-gray-200 rounded-md overflow-hidden mb-6 print:border-gray-300">
-                <table className="min-w-full divide-y divide-gray-200 print:divide-gray-300">
-                  <thead className="bg-gray-50 print:bg-gray-100">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider print:text-gray-700">
-                        Beskrivning
-                      </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider print:text-gray-700">
-                        Antal
-                      </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider print:text-gray-700">
-                        A-pris
-                      </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider print:text-gray-700">
-                        Belopp
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200 print:divide-gray-200">
-                    {invoice.items.map((item) => (
-                      <tr key={item.id} className="print:break-inside-avoid">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                          {item.title}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-500 text-right">
-                          {item.quantity}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-500 text-right">
-                          {Number(item.unitPrice).toLocaleString("sv-SE")} kr
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold text-right">
-                          {Number(item.netAmount).toLocaleString("sv-SE")} kr
-                        </td>
-                      </tr>
-                    ))}
-                    <tr className="bg-gray-50 print:bg-gray-100 font-bold border-t-2 border-gray-300">
-                      <td
-                        colSpan="3"
-                        className="px-6 py-4 text-right text-sm text-gray-900"
-                      >
-                        Totalbelopp (exkl moms):
-                      </td>
-                      <td className="px-6 py-4 text-right text-blue-600 print:text-gray-900 text-xl font-black">
-                        {calculateTotal().toLocaleString("sv-SE")} kr
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <p className="text-gray-500 italic mb-6 print:hidden">
-                Inga rader har lagts till ännu.
-              </p>
-            )}
-
-            {/* FORMULÄR: Döljs vid utskrift */}
-            <div className="print:hidden mt-8 bg-gray-50 p-4 rounded-md border border-gray-200">
-              <h3 className="text-sm font-bold text-gray-700 mb-3">
-                Lägg till ny rad
-              </h3>
-              <form onSubmit={handleAddItem} className="flex items-end gap-4">
-                <div className="flex-1">
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Beskrivning
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={itemTitle}
-                    onChange={(e) => setItemTitle(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    placeholder="t.ex. Konsulttimmar"
-                  />
-                </div>
-                <div className="w-24">
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Antal
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    required
-                    value={itemQuantity}
-                    onChange={(e) => setItemQuantity(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  />
-                </div>
-                <div className="w-32">
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    A-pris (kr)
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    required
-                    value={itemPrice}
-                    onChange={(e) => setItemPrice(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    placeholder="0.00"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  disabled={isAddingItem}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors disabled:opacity-50 whitespace-nowrap cursor-pointer"
-                >
-                  + Lägg till
-                </button>
-              </form>
-            </div>
-
-            {/* FOTNOT */}
-            <div className="hidden print:block text-center text-[10px] text-gray-400 mt-12 border-t border-gray-200 pt-4">
-              <p>Ditt Företag AB | Org.nr: 555555-5555 | Godkänd för F-skatt</p>
-            </div>
+          <div>
+            <p className="font-bold text-gray-700 mb-1">Kontakt</p>
+            <p>070-123 45 67</p>
+            <p>info@williampfyra.se</p>
           </div>
+          <div>
+            <p className="font-bold text-gray-700 mb-1">Betalningsuppgifter</p>
+            <p>Bank: Swedbank</p>
+            <p>Clearingnr: 8XXX-X</p>
+            <p>Kontonr: 123 456 789</p>
+            <p>Swish: 123 456 78 90</p>
+          </div>
+          <div>
+            <p className="font-bold text-gray-700 mb-1">Företagsinfo</p>
+            <p>Org.nr: 556XXX-XXXX</p>
+            <p>Momsreg.nr: SE556XXXXXXX01</p>
+            <p>Godkänd för F-skatt</p>
+          </div>
+        </footer>
+      </div>
+
+      {/* FORMULÄR FÖR ATT LÄGGA TILL RADER (Ligger utanför A4-papperet & Döljs vid utskrift) */}
+      <div className="max-w-[210mm] mx-auto mt-8 print:hidden">
+        <div className="bg-white p-6 shadow-sm rounded-lg border border-gray-200">
+          <h3 className="text-lg font-bold text-gray-800 mb-4">Lägg till ny rad</h3>
+          <form onSubmit={handleAddItem} className="flex flex-col sm:flex-row items-end gap-4">
+            <div className="flex-1 w-full">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Beskrivning</label>
+              <input
+                type="text"
+                required
+                value={itemTitle}
+                onChange={(e) => setItemTitle(e.target.value)}
+                className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                placeholder="t.ex. Konsulttimmar"
+              />
+            </div>
+            <div className="w-full sm:w-24">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Antal</label>
+              <input
+                type="number"
+                min="1"
+                step="0.1"
+                required
+                value={itemQuantity}
+                onChange={(e) => setItemQuantity(e.target.value)}
+                className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              />
+            </div>
+            <div className="w-full sm:w-32">
+              <label className="block text-sm font-medium text-gray-700 mb-1">À-pris (kr)</label>
+              <input
+                type="number"
+                step="0.01"
+                required
+                value={itemPrice}
+                onChange={(e) => setItemPrice(e.target.value)}
+                className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                placeholder="0.00"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={isAddingItem}
+              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-md font-medium transition-colors disabled:opacity-50 cursor-pointer"
+            >
+              + Lägg till
+            </button>
+          </form>
         </div>
       </div>
+
     </div>
   );
 }
