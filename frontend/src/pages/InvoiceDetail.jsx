@@ -10,6 +10,19 @@ export default function InvoiceDetail() {
   const [error, setError] = useState(null);
   const { getToken } = useAuth();
 
+  
+  const myBank = import.meta.env.VITE_COMPANY_BANK
+  const clearing = import.meta.env.VITE_COMPANY_CLEARING
+  const companyAcc = import.meta.env.VITE_COMPANY_ACCOUNT
+  const companySwish = import.meta.env.VITE_COMPANY_SWISH
+  const orgNumber = import.meta.env.VITE_COMPANY_ORGNUMBER
+  const momsNumber = import.meta.env.VITE_COMPANY_MOMSNUMBER
+  const companyAdress = import.meta.env.VITE_COMPANY_ADDRESS
+  const companyPostcode = import.meta.env.VITE_COMPANY_POSTCODE
+  const companyEmail = import.meta.env.VITE_COMPANY_EMAIL
+  const companyOwner = import.meta.env.VITE_COMPANY_OWNERNAME
+  const companyName = import.meta.env.VITE_COMPANY_NAME
+
   const [itemTitle, setItemTitle] = useState("");
   const [itemQuantity, setItemQuantity] = useState(1);
   const [itemPrice, setItemPrice] = useState("");
@@ -105,13 +118,13 @@ export default function InvoiceDetail() {
         <header className="flex justify-between items-start mb-12">
           <div className="text-gray-600">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Williampfyra
+              {companyName}
             </h1>
-            <p>Din Adress 1</p>
-            <p>123 45 Din Stad</p>
+            <p>{companyAdress}</p>
+            <p>{companyPostcode}</p>
             <br />
-            <p>Org.nr: 556XXX-XXXX</p>
-            <p>Momsreg.nr: SE556XXXXXXX01</p>
+            <p>Org.nr: {orgNumber}</p>
+            <p>Momsreg.nr: {momsNumber}</p>
           </div>
           <div className="text-right text-gray-600">
             <h2 className="text-4xl font-light text-gray-900 mb-6 tracking-wider">
@@ -263,26 +276,26 @@ export default function InvoiceDetail() {
 
         <footer className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs text-gray-500 pt-8 border-t border-gray-200">
           <div>
-            <p className="font-bold text-gray-700 mb-1">Williampfyra</p>
-            <p>Din Adress 1</p>
-            <p>123 45 Din Stad</p>
+            <p className="font-bold text-gray-700 mb-1">{companyName}</p>
+            <p>{companyAdress}</p>
+            <p>{companyPostcode}</p>
           </div>
           <div>
             <p className="font-bold text-gray-700 mb-1">Kontakt</p>
-            <p>070-123 45 67</p>
-            <p>info@williampfyra.se</p>
+            <p>{companySwish}</p>
+            <p>{companyEmail}</p>
           </div>
           <div>
             <p className="font-bold text-gray-700 mb-1">Betalningsuppgifter</p>
-            <p>Bank: Swedbank</p>
-            <p>Clearingnr: 8XXX-X</p>
-            <p>Kontonr: 123 456 789</p>
-            <p>Swish: 123 456 78 90</p>
+            <p>Bank: {myBank}</p>
+            <p>Clearingnr:  {clearing}</p>
+            <p>Kontonr: {companyAcc}</p>
+            <p>Swish: {companySwish}</p>
           </div>
           <div>
             <p className="font-bold text-gray-700 mb-1">Företagsinfo</p>
-            <p>Org.nr: 556XXX-XXXX</p>
-            <p>Momsreg.nr: SE556XXXXXXX01</p>
+            <p>Org.nr: {orgNumber}</p>
+            <p>Momsreg.nr: {momsNumber}</p>
             <p>Godkänd för F-skatt</p>
           </div>
         </footer>
