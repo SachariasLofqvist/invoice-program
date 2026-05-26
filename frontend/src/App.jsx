@@ -9,7 +9,7 @@ export default function App() {
     <>
       <SignedIn>
         <BrowserRouter>
-          <div className="absolute top-4 right-4 z-50 hide-on-print">
+          <div className="absolute top-4 right-4 z-50">
             <UserButton/>
           </div>
           
