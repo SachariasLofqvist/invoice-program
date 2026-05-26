@@ -94,10 +94,13 @@ export default function InvoiceDetail() {
     return <div className="text-center py-12 text-red-500">{error}</div>;
 
   const invoiceDate = new Date(invoice.dateCreated).toLocaleDateString("sv-SE");
-  const dueDateFormatted = invoice.dueDate ? new Date(invoice.dueDate).toLocaleDateString("sv-SE") : "-";
+  const dueDateFormatted = invoice.dueDate
+    ? new Date(invoice.dueDate).toLocaleDateString("sv-SE")
+    : "-";
 
   return (
     <div className="bg-gray-200 min-h-screen py-8 print:py-0 print:bg-white text-sm">
+      
       <div className="max-w-[210mm] mx-auto mb-4 flex justify-between items-center print:hidden px-4 sm:px-0">
         <Link
           to="/"
@@ -107,13 +110,13 @@ export default function InvoiceDetail() {
         </Link>
         <button
           onClick={handlePrint}
-          className="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-md font-semibold shadow-sm"
+          className="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-md font-semibold shadow-sm cursor-pointer"
         >
           Spara som PDF
         </button>
       </div>
 
-      <div className="max-w-[210mm] mx-auto bg-white p-[20mm] shadow-lg min-h-[297mm] flex flex-col print:shadow-none print:p-0 print:m-0">
+      <div className="max-w-[210mm] mx-auto bg-white p-[20mm] shadow-lg min-h-[297mm] flex flex-col print:shadow-none print:p-[20mm] print:min-h-[290mm] print:m-0">
         <header className="flex justify-between items-start mb-12">
           <div className="text-gray-600">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
@@ -349,7 +352,7 @@ export default function InvoiceDetail() {
             <button
               type="submit"
               disabled={isAddingItem}
-              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-md font-medium transition-colors disabled:opacity-50"
+              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-md font-medium transition-colors disabled:opacity-50 cursor-pointer"
             >
               + Lägg till
             </button>

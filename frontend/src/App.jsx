@@ -9,7 +9,7 @@ export default function App() {
     <>
       <SignedIn>
         <BrowserRouter>
-          <div className="fixed top-4 right-4 z-9999 profilbild-print-skydd">
+          <div className="fixed top-4 right-4 z-9999 print:hidden">
             <UserButton />
           </div>
 
