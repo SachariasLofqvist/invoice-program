@@ -9,10 +9,10 @@ export default function App() {
     <>
       <SignedIn>
         <BrowserRouter>
-          <div className="fixed top-4 right-4 z-9999">
-            <UserButton/>
+          <div className="fixed top-4 right-4 z-9999 profilbild-print-skydd">
+            <UserButton />
           </div>
-          
+
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/create" element={<InvoiceForm />} />
@@ -21,11 +21,12 @@ export default function App() {
         </BrowserRouter>
       </SignedIn>
 
-
       <SignedOut>
         <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">Invoice app</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-6">
+              Invoice app
+            </h1>
             <SignIn />
           </div>
         </div>
