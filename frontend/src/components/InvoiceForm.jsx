@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/clerk-react";
 
@@ -16,6 +16,21 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { getToken } = useAuth();
+
+  useEffect(() => {
+    const days = parseInt(paymentTerms);
+
+    if (!isNaN(days)) {
+      const today = new Date();
+      today.setDate(today.getDate() + days);
+
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, "0");
+      const dd = String(today.getDate()).padStart(2, "0");
+
+      setDueDate(`${yyyy}-${mm}-${dd}`);
+    }
+  }, [paymentTerms]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,7 +82,6 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* SEKTION 1: Fakturadetaljer */}
           <div>
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider border-b pb-2 mb-4">
               Fakturadetaljer
@@ -104,18 +118,6 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
             <div className="grid grid-cols-2 gap-4 mt-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Förfallodag
-                </label>
-                <input
-                  type="date"
-                  required
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Betalningsvillkor
                 </label>
                 <select
@@ -127,6 +129,18 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
                   <option value="30 dagar">30 dagar</option>
                   <option value="60 dagar">60 dagar</option>
                 </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Förfallodag (Beräknad)
+                </label>
+                <input
+                  type="date"
+                  required
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none bg-blue-50/30"
+                />
               </div>
             </div>
 
@@ -162,7 +176,6 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
             </div>
           </div>
 
-          {/* SEKTION 2: Kunduppgifter */}
           <div>
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider border-b pb-2 mb-4">
               Kunduppgifter

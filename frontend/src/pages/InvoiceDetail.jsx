@@ -94,6 +94,7 @@ export default function InvoiceDetail() {
     return <div className="text-center py-12 text-red-500">{error}</div>;
 
   const invoiceDate = new Date(invoice.dateCreated).toLocaleDateString("sv-SE");
+  const dueDateFormatted = invoice.dueDate ? new Date(invoice.dueDate).toLocaleDateString("sv-SE") : "-";
 
   return (
     <div className="bg-gray-200 min-h-screen py-8 print:py-0 print:bg-white text-sm">
@@ -163,7 +164,7 @@ export default function InvoiceDetail() {
               Förfallodag
             </p>
             <p className="font-medium text-gray-900">
-              {invoice.dueDate || "-"}
+              {dueDateFormatted || "-"}
             </p>
           </div>
           <div>
