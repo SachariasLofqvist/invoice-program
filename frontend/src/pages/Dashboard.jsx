@@ -1,22 +1,21 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { useAuth } from "@clerk/clerk-react"; // <-- VIKTIGT: För säkerheten
-import InvoiceForm from "../components/InvoiceForm"; // <-- VIKTIGT: För att hitta din popup!
+import { useAuth } from "@clerk/clerk-react";
+import InvoiceForm from "../components/InvoiceForm";
 
 export default function Dashboard() {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { getToken } = useAuth(); // Hämta nyckeln från Clerk
+  const { getToken } = useAuth();
 
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
         const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
-        const token = await getToken(); // Hämta säkerhetsnyckeln
+        const token = await getToken();
 
-        // Skicka anropet till backenden MED nyckeln
         const response = await axios.get(`${API_URL}/api/invoices`, {
           headers: {
             Authorization: `Bearer ${token}`,

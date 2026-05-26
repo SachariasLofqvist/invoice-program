@@ -1,5 +1,5 @@
 import express from "express";
-import { clerkMiddleware, getAuth } from "@clerk/express"; // <-- NYA IMPORTER
+import { clerkMiddleware, getAuth } from "@clerk/express";
 import {
   getInvoices,
   createInvoice,

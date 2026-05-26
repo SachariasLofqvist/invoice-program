@@ -4,7 +4,6 @@ import App from "./App.jsx";
 import "./index.css";
 import { ClerkProvider } from "@clerk/clerk-react";
 
-// Importera nyckeln från din .env-fil
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {

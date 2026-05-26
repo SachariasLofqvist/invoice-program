@@ -39,7 +39,7 @@ export const createInvoice = async (req, res) => {
         clientId: clientId ? Number(clientId) : null,
         dueDate: parsedDueDate,
         vatRate: vatRate ? Number(vatRate) : 25,
-        defaultInterest: lateFee ? Number(lateFee) : 8, // Vi sparar lateFee i ditt defaultInterest-fält
+        defaultInterest: lateFee ? Number(lateFee) : 8,
         customerName,
         customerAddress,
         customerOrgNr,

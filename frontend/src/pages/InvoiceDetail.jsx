@@ -10,18 +10,17 @@ export default function InvoiceDetail() {
   const [error, setError] = useState(null);
   const { getToken } = useAuth();
 
-  
-  const myBank = import.meta.env.VITE_COMPANY_BANK
-  const clearing = import.meta.env.VITE_COMPANY_CLEARING
-  const companyAcc = import.meta.env.VITE_COMPANY_ACCOUNT
-  const companySwish = import.meta.env.VITE_COMPANY_SWISH
-  const orgNumber = import.meta.env.VITE_COMPANY_ORGNUMBER
-  const momsNumber = import.meta.env.VITE_COMPANY_MOMSNUMBER
-  const companyAdress = import.meta.env.VITE_COMPANY_ADDRESS
-  const companyPostcode = import.meta.env.VITE_COMPANY_POSTCODE
-  const companyEmail = import.meta.env.VITE_COMPANY_EMAIL
-  const companyOwner = import.meta.env.VITE_COMPANY_OWNERNAME
-  const companyName = import.meta.env.VITE_COMPANY_NAME
+  const myBank = import.meta.env.VITE_COMPANY_BANK;
+  const clearing = import.meta.env.VITE_COMPANY_CLEARING;
+  const companyAcc = import.meta.env.VITE_COMPANY_ACCOUNT;
+  const companySwish = import.meta.env.VITE_COMPANY_SWISH;
+  const orgNumber = import.meta.env.VITE_COMPANY_ORGNUMBER;
+  const momsNumber = import.meta.env.VITE_COMPANY_MOMSNUMBER;
+  const companyAdress = import.meta.env.VITE_COMPANY_ADDRESS;
+  const companyPostcode = import.meta.env.VITE_COMPANY_POSTCODE;
+  const companyEmail = import.meta.env.VITE_COMPANY_EMAIL;
+  const companyOwner = import.meta.env.VITE_COMPANY_OWNERNAME;
+  const companyName = import.meta.env.VITE_COMPANY_NAME;
 
   const [itemTitle, setItemTitle] = useState("");
   const [itemQuantity, setItemQuantity] = useState(1);
@@ -78,7 +77,6 @@ export default function InvoiceDetail() {
   };
 
   const netTotal = calculateNetTotal();
-  // Läs av momsen från databasen, eller fallback till 25
   const invoiceVatRate =
     invoice?.vatRate !== undefined ? Number(invoice.vatRate) : 25;
   const vatAmount = netTotal * (invoiceVatRate / 100);
@@ -240,10 +238,8 @@ export default function InvoiceDetail() {
           </table>
         </div>
 
-        {/* HÄR ÄR MAGIN: Denna div sväller upp och tar all överbliven plats, vilket trycker ner summeringen! */}
         <div className="grow"></div>
 
-        {/* SUMMERING - Trycks ner till botten */}
         <div className="flex justify-end mb-12">
           <div className="w-full sm:w-1/2 md:w-1/3">
             <div className="flex justify-between py-1 text-gray-600">
@@ -288,7 +284,7 @@ export default function InvoiceDetail() {
           <div>
             <p className="font-bold text-gray-700 mb-1">Betalningsuppgifter</p>
             <p>Bank: {myBank}</p>
-            <p>Clearingnr:  {clearing}</p>
+            <p>Clearingnr: {clearing}</p>
             <p>Kontonr: {companyAcc}</p>
             <p>Swish: {companySwish}</p>
           </div>
