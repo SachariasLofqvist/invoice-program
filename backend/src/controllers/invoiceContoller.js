@@ -16,7 +16,20 @@ export const getInvoices = async (req, res) => {
 
 export const createInvoice = async (req, res) => {
   try {
-    const { title, number, paymentTerms, clientId } = req.body;
+    const {
+      title,
+      number,
+      paymentTerms,
+      clientId,
+      dueDate,
+      vatRate,
+      lateFee,
+      customerName,
+      customerAddress,
+      customerOrgNr,
+    } = req.body;
+
+    const parsedDueDate = dueDate ? new Date(dueDate) : null;
 
     const newInvoice = await prisma.invoice.create({
       data: {
@@ -24,6 +37,12 @@ export const createInvoice = async (req, res) => {
         number,
         paymentTerms,
         clientId: clientId ? Number(clientId) : null,
+        dueDate: parsedDueDate,
+        vatRate: vatRate ? Number(vatRate) : 25,
+        defaultInterest: lateFee ? Number(lateFee) : 8, // Vi sparar lateFee i ditt defaultInterest-fält
+        customerName,
+        customerAddress,
+        customerOrgNr,
       },
     });
 

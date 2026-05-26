@@ -1,43 +1,41 @@
 import { useState } from "react";
 import axios from "axios";
-import { useAuth } from "@clerk/clerk-react"; // VIKTIGT: Importera Clerk
+import { useAuth } from "@clerk/clerk-react";
 
-// VIKTIGT: Här måste { onClose, onInvoiceCreated } finnas med!
 export default function InvoiceForm({ onClose, onInvoiceCreated }) {
   const [title, setTitle] = useState("");
   const [number, setNumber] = useState("");
-  const [paymentTerms, setPaymentTerms] = useState("14 dagar");
+  const [paymentTerms, setPaymentTerms] = useState("30 dagar");
+  const [dueDate, setDueDate] = useState("");
+  const [vatRate, setVatRate] = useState("25");
+  const [lateFee, setLateFee] = useState("8");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { getToken } = useAuth(); // Hämta nyckeln från Clerk
+  const { getToken } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      // 1. Använd dynamisk URL för att det ska fungera på Render
       const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
-
-      // 2. Hämta den hemliga inloggningsnyckeln
       const token = await getToken();
 
-      // 3. Skicka anropet till din backend och bifoga nyckeln
       const response = await axios.post(
         `${API_URL}/api/invoices`,
         {
           title,
           number,
           paymentTerms,
+          dueDate,
+          vatRate: Number(vatRate),
+          lateFee: Number(lateFee),
         },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         },
       );
 
-      // 4. Skicka den skapade fakturan till Dashboard och stäng popupen
       onInvoiceCreated(response.data);
       onClose();
     } catch (error) {
@@ -62,59 +60,93 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <label
-              htmlFor="title"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Fakturarubrik
-            </label>
-            <input
-              id="title"
-              type="text"
-              required
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="t.ex. Webbutveckling april"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="col-span-2 sm:col-span-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Fakturarubrik
+              </label>
+              <input
+                type="text"
+                required
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                placeholder="t.ex. Webbutveckling april"
+              />
+            </div>
+            <div className="col-span-2 sm:col-span-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Fakturanummer
+              </label>
+              <input
+                type="text"
+                required
+                value={number}
+                onChange={(e) => setNumber(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                placeholder="t.ex. INV-1002"
+              />
+            </div>
           </div>
 
-          <div>
-            <label
-              htmlFor="number"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Fakturanummer
-            </label>
-            <input
-              id="number"
-              type="text"
-              required
-              value={number}
-              onChange={(e) => setNumber(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="t.ex. INV-1002"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Förfallodag
+              </label>
+              <input
+                type="date"
+                required
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Betalningsvillkor
+              </label>
+              <select
+                value={paymentTerms}
+                onChange={(e) => setPaymentTerms(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              >
+                <option value="14 dagar">14 dagar</option>
+                <option value="30 dagar">30 dagar</option>
+                <option value="60 dagar">60 dagar</option>
+              </select>
+            </div>
           </div>
 
-          <div>
-            <label
-              htmlFor="paymentTerms"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Betalningsvillkor
-            </label>
-            <select
-              id="paymentTerms"
-              value={paymentTerms}
-              onChange={(e) => setPaymentTerms(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="14 dagar">14 dagar</option>
-              <option value="30 dagar">30 dagar</option>
-              <option value="60 dagar">60 dagar</option>
-            </select>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Moms (%)
+              </label>
+              <select
+                value={vatRate}
+                onChange={(e) => setVatRate(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              >
+                <option value="25">25%</option>
+                <option value="12">12%</option>
+                <option value="6">6%</option>
+                <option value="0">0% (Momsfri)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Dröjsmålsränta (%)
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                required
+                value={lateFee}
+                onChange={(e) => setLateFee(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              />
+            </div>
           </div>
 
           <div className="pt-4 flex justify-end space-x-3 border-t border-gray-200 mt-6">

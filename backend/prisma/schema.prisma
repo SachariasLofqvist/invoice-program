@@ -39,7 +39,13 @@ model Invoice {
   dueDate         DateTime?
   paymentTerms    String    @default("14 days")
   status          String    @default("CURRENT")
-  defaultInterest Int?
+  defaultInterest Int?      // Vi använder denna för dröjsmålsränta (lateFee)
+  vatRate         Int?      @default(25) // <-- LÄGG TILL DENNA FÖR MOMS
+  
+  customerName    String?
+  customerAddress String?
+  customerOrgNr   String?
+  
   notes           String?
   product         String?
   rateField       Decimal   @default(0)
