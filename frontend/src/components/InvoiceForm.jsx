@@ -97,7 +97,6 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  placeholder="t.ex. Webbutveckling april"
                 />
               </div>
               <div className="col-span-2 sm:col-span-1">
@@ -132,7 +131,7 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Förfallodag (Beräknad)
+                  Förfallodag
                 </label>
                 <input
                   type="date"
@@ -157,7 +156,7 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
                   <option value="25">25%</option>
                   <option value="12">12%</option>
                   <option value="6">6%</option>
-                  <option value="0">0% (Momsfri)</option>
+                  <option value="0">0%</option>
                 </select>
               </div>
               <div>
@@ -191,7 +190,6 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  placeholder="t.ex. Festments AB"
                 />
               </div>
 
@@ -205,20 +203,18 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
                   value={customerAddress}
                   onChange={(e) => setCustomerAddress(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  placeholder="t.ex. Storgatan 1&#10;123 45 Staden"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Organisationsnummer (Frivilligt)
+                  Organisationsnummer
                 </label>
                 <input
                   type="text"
                   value={customerOrgNr}
                   onChange={(e) => setCustomerOrgNr(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  placeholder="t.ex. 556XXX-XXXX"
                 />
               </div>
             </div>
