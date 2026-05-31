@@ -1,8 +1,14 @@
+import { getAuth } from "@clerk/express";
 import { prisma } from "../../lib/prisma.js";
 
 export const getInvoices = async (req, res) => {
+  const {userID} = getAuth(req);
+
   try {
     const invoices = await prisma.invoice.findMany({
+      where: {
+        clerkUserID: userID,
+      },
       include: {
         client: true,
       },
@@ -15,6 +21,8 @@ export const getInvoices = async (req, res) => {
 };
 
 export const createInvoice = async (req, res) => {
+  const {userID} = getAuth(req)
+
   try {
     const {
       title,
@@ -43,6 +51,7 @@ export const createInvoice = async (req, res) => {
         customerName,
         customerAddress,
         customerOrgNr,
+        clerkUserID: userID,
       },
     });
 
@@ -54,6 +63,9 @@ export const createInvoice = async (req, res) => {
 };
 
 export const getInvoiceById = async (req, res) => {
+
+  const {userID} = getAuth(req)
+
   try {
     const { id } = req.params;
 
@@ -69,6 +81,10 @@ export const getInvoiceById = async (req, res) => {
 
     if (!invoice) {
       return res.status(404).json({ error: "Fakturan kunde inte hittas." });
+    }
+
+    if (invoice.clerkUserId !== userID) {
+      return res.status(403).json({ error: "Du har inte tillåtelse att se denna faktura." });
     }
 
     res.status(200).json(invoice);
