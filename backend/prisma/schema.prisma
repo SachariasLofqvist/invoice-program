@@ -27,7 +27,8 @@ model Client {
   uniqueId    String?   @default(uuid()) 
   slug        String?   @unique
   dateCreated DateTime  @default(now()) 
-  lastUpdated DateTime  @updatedAt      
+  lastUpdated DateTime  @updatedAt
+  clerkUserID String?  
 
   invoices    Invoice[]
 }
@@ -41,6 +42,7 @@ model Invoice {
   status          String    @default("CURRENT")
   defaultInterest Int?      // Vi använder denna för dröjsmålsränta (lateFee)
   vatRate         Int?      @default(25) // <-- LÄGG TILL DENNA FÖR MOMS
+  clerkUserID     String?
   
   customerName    String?
   customerAddress String?
