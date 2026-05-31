@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 const corsOptions = {
-  origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_API],
+  origin: process.env.FRONTEND_URL,
   optionsSuccessStatus: 200,
   credentials: true,
 };
