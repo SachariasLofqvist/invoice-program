@@ -1,5 +1,4 @@
 import 'dotenv/config';
-console.log("LÄSER IN NYCKEL:", process.env.CLERK_PUBLISHABLE_KEY);
 import express from 'express';
 import cors from 'cors';
 import invoiceRoutes from './routes/invoiceRoutes.js'
