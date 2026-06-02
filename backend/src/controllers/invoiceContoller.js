@@ -2,7 +2,7 @@ import { getAuth } from "@clerk/express";
 import { prisma } from "../../lib/prisma.js";
 
 export const getInvoices = async (req, res) => {
-  const {userID} = getAuth(req);
+  const { userID } = getAuth(req);
 
   try {
     const invoices = await prisma.invoice.findMany({
@@ -21,7 +21,7 @@ export const getInvoices = async (req, res) => {
 };
 
 export const createInvoice = async (req, res) => {
-  const {userID} = getAuth(req)
+  const { userID } = getAuth(req);
 
   try {
     const {
@@ -35,6 +35,8 @@ export const createInvoice = async (req, res) => {
       customerName,
       customerAddress,
       customerOrgNr,
+      reff, // <-- NYTT: Plockar ut referens
+      notes, // <-- NYTT: Plockar ut kommentarer
     } = req.body;
 
     const parsedDueDate = dueDate ? new Date(dueDate) : null;
@@ -51,6 +53,8 @@ export const createInvoice = async (req, res) => {
         customerName,
         customerAddress,
         customerOrgNr,
+        reff, // <-- NYTT: Sparar referensen i databasen
+        notes, // <-- NYTT: Sparar kommentarerna i databasen
         clerkUserID: userID,
       },
     });
@@ -63,8 +67,7 @@ export const createInvoice = async (req, res) => {
 };
 
 export const getInvoiceById = async (req, res) => {
-
-  const {userID} = getAuth(req)
+  const { userID } = getAuth(req);
 
   try {
     const { id } = req.params;
@@ -83,8 +86,11 @@ export const getInvoiceById = async (req, res) => {
       return res.status(404).json({ error: "Fakturan kunde inte hittas." });
     }
 
-    if (invoice.clerkUserId !== userID) {
-      return res.status(403).json({ error: "Du har inte tillåtelse att se denna faktura." });
+    // Buggfix: Ändrade från litet d till stort D på clerkUserID så att det matchar din schema.prisma
+    if (invoice.clerkUserID !== userID) {
+      return res
+        .status(403)
+        .json({ error: "Du har inte tillåtelse att se denna faktura." });
     }
 
     res.status(200).json(invoice);

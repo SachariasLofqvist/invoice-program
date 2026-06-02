@@ -14,6 +14,10 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
   const [customerAddress, setCustomerAddress] = useState("");
   const [customerOrgNr, setCustomerOrgNr] = useState("");
 
+  // NYTT: State för Referens och Kommentarer
+  const [reff, setReff] = useState("");
+  const [notes, setNotes] = useState("");
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { getToken } = useAuth();
 
@@ -52,6 +56,8 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
           customerName,
           customerAddress,
           customerOrgNr,
+          reff, // <-- NYTT: Skickar med referens
+          notes, // <-- NYTT: Skickar med kommentarer
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -82,6 +88,7 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {/* FAKTURADETALJER */}
           <div>
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider border-b pb-2 mb-4">
               Fakturadetaljer
@@ -175,8 +182,9 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
             </div>
           </div>
 
+          {/* KUNDUPPGIFTER */}
           <div>
-            <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider border-b pb-2 mb-4">
+            <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider border-b pb-2 mb-4 mt-6">
               Kunduppgifter
             </h3>
             <div className="space-y-4">
@@ -206,17 +214,51 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Organisationsnummer
-                </label>
-                <input
-                  type="text"
-                  value={customerOrgNr}
-                  onChange={(e) => setCustomerOrgNr(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2 sm:col-span-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Organisationsnummer
+                  </label>
+                  <input
+                    type="text"
+                    value={customerOrgNr}
+                    onChange={(e) => setCustomerOrgNr(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+                {/* NYTT: Köparens referens */}
+                <div className="col-span-2 sm:col-span-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Köparens referens
+                  </label>
+                  <input
+                    type="text"
+                    value={reff}
+                    onChange={(e) => setReff(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    placeholder="T.ex. Anna Andersson"
+                  />
+                </div>
               </div>
+            </div>
+          </div>
+
+          {/* NYTT: ÖVRIG INFORMATION (Kommentarer) */}
+          <div>
+            <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider border-b pb-2 mb-4 mt-6">
+              Övrig information
+            </h3>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Kommentarer (visas på fakturan)
+              </label>
+              <textarea
+                rows="3"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                placeholder="Skriv eventuella kommentarer eller villkor här..."
+              />
             </div>
           </div>
 
