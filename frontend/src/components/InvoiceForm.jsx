@@ -56,8 +56,8 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
           customerName,
           customerAddress,
           customerOrgNr,
-          reff, // <-- NYTT: Skickar med referens
-          notes, // <-- NYTT: Skickar med kommentarer
+          reff, 
+          notes, 
         },
         {
           headers: { Authorization: `Bearer ${token}` },

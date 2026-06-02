@@ -70,7 +70,6 @@ export default function InvoiceDetail() {
     }
   };
 
-  // Uträkningar
   const calculateNetTotal = () => {
     if (!invoice?.items) return 0;
     return invoice.items.reduce((sum, item) => sum + Number(item.netAmount), 0);
@@ -183,7 +182,7 @@ export default function InvoiceDetail() {
               Köparens referens
             </p>
             <p className="font-medium text-gray-900">
-              {invoice.customerReference || "-"}
+              {invoice.reff || "-"}
             </p>
           </div>
         </div>
