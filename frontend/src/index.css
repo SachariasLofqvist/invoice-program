@@ -1,21 +1,22 @@
-@import "tailwindcss";
-
 @media print {
   @page {
     size: A4;
-    margin: 8mm 12mm 8mm 12mm !important; 
+    margin: 0 !important;
   }
 
-  html, body {
+  body {
+    padding: 15mm 15mm 15mm 15mm !important;
     font-size: 13px !important;
     background: white;
   }
 
-  footer, .invoice-footer, .footer-section {
+  footer,
+  .invoice-footer,
+  .footer-section {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
-  
+
   .no-print {
     display: none !important;
   }
