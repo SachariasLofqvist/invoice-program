@@ -99,7 +99,6 @@ export default function InvoiceDetail() {
 
   return (
     <div className="bg-gray-200 min-h-screen py-8 print:py-0 print:bg-white text-sm">
-      
       <div className="max-w-[210mm] mx-auto mb-4 flex justify-between items-center print:hidden px-4 sm:px-0">
         <Link
           to="/"
@@ -115,54 +114,54 @@ export default function InvoiceDetail() {
         </button>
       </div>
 
-      <div className="max-w-[210mm] mx-auto bg-white p-[20mm] shadow-lg min-h-[297mm] flex flex-col print:shadow-none print:p-[15mm] print:min-h-[290mm] print:m-0">
-        <header className="flex justify-between items-start mb-12">
-          <div className="text-gray-600">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+      <div className="max-w-[210mm] mx-auto bg-white p-[20mm] shadow-lg min-h-[297mm] flex flex-col print:shadow-none print:p-[10mm] print:min-h-[297mm] print:m-0">
+        <header className="flex justify-between items-start mb-12 print:mb-6">
+          <div className="text-gray-600 print:text-xs">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2 print:mb-1 print:text-xl">
               {companyName}
             </h1>
             <p>{companyAdress}</p>
             <p>{companyPostcode}</p>
-            <br />
-            <p>Org.nr: {orgNumber}</p>
+            <br className="print:hidden" />
+            <p className="print:mt-1">Org.nr: {orgNumber}</p>
             <p>Momsreg.nr: {momsNumber}</p>
           </div>
           <div className="text-right text-gray-600">
-            <h2 className="text-4xl font-light text-gray-900 mb-6 tracking-wider">
+            <h2 className="text-4xl font-light text-gray-900 mb-6 tracking-wider print:mb-3 print:text-3xl">
               FAKTURA
             </h2>
-            <div className="bg-gray-50 p-4 text-left inline-block min-w-55 border border-gray-100">
-              <h3 className="font-bold text-gray-900 mb-1">
+            <div className="bg-gray-50 p-4 text-left inline-block min-w-55 border border-gray-100 print:border-gray-300 print:p-2">
+              <h3 className="font-bold text-gray-900 mb-1 print:text-sm">
                 {invoice.customerName || "Ny Kund AB"}
               </h3>
-              <p className="whitespace-pre-wrap text-sm">
+              <p className="whitespace-pre-wrap text-sm print:text-xs">
                 {invoice.customerAddress || "Kundgatan 1\n123 45 Staden"}
               </p>
             </div>
           </div>
         </header>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-12 border-b border-t border-gray-200 py-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-12 border-b border-t border-gray-200 py-4 print:mb-6 print:py-2 print:gap-2 print:text-xs">
           <div>
-            <p className="text-gray-500 font-semibold text-xs uppercase">
+            <p className="text-gray-500 font-semibold text-xs uppercase print:text-[10px]">
               Fakturanummer
             </p>
             <p className="font-medium text-gray-900">{invoice.number}</p>
           </div>
           <div>
-            <p className="text-gray-500 font-semibold text-xs uppercase">
+            <p className="text-gray-500 font-semibold text-xs uppercase print:text-[10px]">
               Fakturadatum
             </p>
             <p className="font-medium text-gray-900">{invoiceDate}</p>
           </div>
           <div>
-            <p className="text-gray-500 font-semibold text-xs uppercase">
+            <p className="text-gray-500 font-semibold text-xs uppercase print:text-[10px]">
               Betalningsvillkor
             </p>
             <p className="font-medium text-gray-900">{invoice.paymentTerms}</p>
           </div>
           <div>
-            <p className="text-gray-500 font-semibold text-xs uppercase">
+            <p className="text-gray-500 font-semibold text-xs uppercase print:text-[10px]">
               Förfallodag
             </p>
             <p className="font-medium text-gray-900">
@@ -170,7 +169,7 @@ export default function InvoiceDetail() {
             </p>
           </div>
           <div>
-            <p className="text-gray-500 font-semibold text-xs uppercase">
+            <p className="text-gray-500 font-semibold text-xs uppercase print:text-[10px]">
               Dröjsmålsränta
             </p>
             <p className="font-medium text-gray-900">
@@ -178,48 +177,60 @@ export default function InvoiceDetail() {
             </p>
           </div>
           <div>
-            <p className="text-gray-500 font-semibold text-xs uppercase">
+            <p className="text-gray-500 font-semibold text-xs uppercase print:text-[10px]">
               Köparens referens
             </p>
-            <p className="font-medium text-gray-900">
-              {invoice.reff || "-"}
-            </p>
+            <p className="font-medium text-gray-900">{invoice.reff || "-"}</p>
           </div>
         </div>
 
-        <div className="w-full mb-4">
-          <table className="w-full text-left border-collapse">
+        <div className="w-full mb-4 print:mb-2">
+          <table className="w-full text-left border-collapse print:text-xs">
             <thead>
               <tr className="border-b-2 border-gray-800 text-gray-800">
-                <th className="py-2 font-semibold">Beskrivning</th>
-                <th className="py-2 font-semibold text-center hidden sm:table-cell">
+                <th className="py-2 print:py-1 font-semibold">Beskrivning</th>
+                <th className="py-2 print:py-1 font-semibold text-center hidden sm:table-cell">
                   Datum
                 </th>
-                <th className="py-2 font-semibold text-right">Antal</th>
-                <th className="py-2 font-semibold text-center">Enhet</th>
-                <th className="py-2 font-semibold text-right">À pris</th>
-                <th className="py-2 font-semibold text-right">Moms %</th>
-                <th className="py-2 font-semibold text-right">Belopp</th>
+                <th className="py-2 print:py-1 font-semibold text-right">
+                  Antal
+                </th>
+                <th className="py-2 print:py-1 font-semibold text-center">
+                  Enhet
+                </th>
+                <th className="py-2 print:py-1 font-semibold text-right">
+                  À pris
+                </th>
+                <th className="py-2 print:py-1 font-semibold text-right">
+                  Moms %
+                </th>
+                <th className="py-2 print:py-1 font-semibold text-right">
+                  Belopp
+                </th>
               </tr>
             </thead>
             <tbody className="text-gray-700">
               {invoice.items && invoice.items.length > 0 ? (
                 invoice.items.map((item) => (
                   <tr key={item.id} className="border-b border-gray-100">
-                    <td className="py-3">{item.title}</td>
-                    <td className="py-3 text-center hidden sm:table-cell">
+                    <td className="py-3 print:py-1">{item.title}</td>
+                    <td className="py-3 print:py-1 text-center hidden sm:table-cell">
                       {invoiceDate}
                     </td>
-                    <td className="py-3 text-right">{item.quantity}</td>
-                    <td className="py-3 text-center">st</td>
-                    <td className="py-3 text-right">
+                    <td className="py-3 print:py-1 text-right">
+                      {item.quantity}
+                    </td>
+                    <td className="py-3 print:py-1 text-center">st</td>
+                    <td className="py-3 print:py-1 text-right">
                       {Number(item.unitPrice).toLocaleString("sv-SE", {
                         minimumFractionDigits: 2,
                       })}{" "}
                       kr
                     </td>
-                    <td className="py-3 text-right">{invoiceVatRate}%</td>
-                    <td className="py-3 text-right font-medium">
+                    <td className="py-3 print:py-1 text-right">
+                      {invoiceVatRate}%
+                    </td>
+                    <td className="py-3 print:py-1 text-right font-medium">
                       {Number(item.netAmount).toLocaleString("sv-SE", {
                         minimumFractionDigits: 2,
                       })}{" "}
@@ -231,7 +242,7 @@ export default function InvoiceDetail() {
                 <tr>
                   <td
                     colSpan="7"
-                    className="py-8 text-center text-gray-400 italic"
+                    className="py-8 print:py-2 text-center text-gray-400 italic"
                   >
                     Inga rader har lagts till ännu.
                   </td>
@@ -241,10 +252,21 @@ export default function InvoiceDetail() {
           </table>
         </div>
 
+        {invoice.notes && (
+          <div className="mb-4 p-4 bg-gray-50 border border-gray-100 rounded-md print:p-2 print:bg-transparent print:border-none print:mt-1">
+            <h4 className="font-semibold text-gray-500 text-xs uppercase mb-1 print:text-gray-800 print:text-[10px]">
+              Kommentar / Villkor
+            </h4>
+            <p className="whitespace-pre-wrap text-sm text-gray-800 print:text-xs">
+              {invoice.notes}
+            </p>
+          </div>
+        )}
+
         <div className="grow"></div>
 
-        <div className="flex justify-end mb-12">
-          <div className="w-full sm:w-1/2 md:w-1/3">
+        <div className="flex justify-end mb-12 print:mb-6">
+          <div className="w-full sm:w-1/2 md:w-1/3 print:text-xs">
             <div className="flex justify-between py-1 text-gray-600">
               <span>Totalt exkl moms</span>
               <span>
@@ -261,7 +283,7 @@ export default function InvoiceDetail() {
                 kr
               </span>
             </div>
-            <div className="flex justify-between py-3 mt-2 border-t-2 border-gray-800 font-bold text-lg text-gray-900">
+            <div className="flex justify-between py-3 mt-2 border-t-2 border-gray-800 font-bold text-lg text-gray-900 print:py-1 print:text-sm">
               <span>Summa att betala</span>
               <span>
                 {grossTotal.toLocaleString("sv-SE", {
@@ -273,7 +295,7 @@ export default function InvoiceDetail() {
           </div>
         </div>
 
-        <footer className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs text-gray-500 pt-8 border-t border-gray-200">
+        <footer className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs text-gray-500 pt-8 border-t border-gray-200 print:pt-4 print:text-[10px] print:gap-2">
           <div>
             <p className="font-bold text-gray-700 mb-1">{companyName}</p>
             <p>{companyAdress}</p>
