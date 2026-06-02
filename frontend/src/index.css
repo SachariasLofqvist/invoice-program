@@ -1,23 +1,5 @@
 @media print {
   @page {
-    size: A4;
-    margin: 0 !important;
-  }
-
-  body {
-    padding: 15mm 15mm 15mm 15mm !important;
-    font-size: 13px !important;
-    background: white;
-  }
-
-  footer,
-  .invoice-footer,
-  .footer-section {
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
-  }
-
-  .no-print {
-    display: none !important;
+    margin: 0;
   }
 }

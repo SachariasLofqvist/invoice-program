@@ -115,7 +115,7 @@ export default function InvoiceDetail() {
         </button>
       </div>
 
-      <div className="max-w-[210mm] mx-auto bg-white p-[20mm] shadow-lg min-h-[297mm] flex flex-col print:shadow-none print:p-[20mm] print:min-h-[290mm] print:m-0">
+      <div className="max-w-[210mm] mx-auto bg-white p-[20mm] shadow-lg min-h-[297mm] flex flex-col print:shadow-none print:p-[15mm] print:min-h-[290mm] print:m-0">
         <header className="flex justify-between items-start mb-12">
           <div className="text-gray-600">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
