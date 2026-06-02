@@ -255,7 +255,7 @@ export default function InvoiceDetail() {
         {invoice.notes && (
           <div className="mb-4 p-4 bg-gray-50 border border-gray-100 rounded-md print:p-2 print:bg-transparent print:border-none print:mt-1">
             <h4 className="font-semibold text-gray-500 text-xs uppercase mb-1 print:text-gray-800 print:text-[10px]">
-              Kommentar / Villkor
+              Kommentar
             </h4>
             <p className="whitespace-pre-wrap text-sm text-gray-800 print:text-xs">
               {invoice.notes}
