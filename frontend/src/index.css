@@ -2,6 +2,21 @@
 
 @media print {
   @page {
-    margin: 0;
+    size: A4;
+    margin: 8mm 12mm 8mm 12mm !important; 
+  }
+
+  html, body {
+    font-size: 13px !important;
+    background: white;
+  }
+
+  footer, .invoice-footer, .footer-section {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  
+  .no-print {
+    display: none !important;
   }
 }
