@@ -1,27 +1,54 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/clerk-react";
 
-export default function InvoiceForm({ onClose, onInvoiceCreated }) {
-  const [title, setTitle] = useState("");
-  const [number, setNumber] = useState("");
-  const [paymentTerms, setPaymentTerms] = useState("30 dagar");
-  const [dueDate, setDueDate] = useState("");
-  const [vatRate, setVatRate] = useState("25");
-  const [lateFee, setLateFee] = useState("8");
+export default function InvoiceForm({
+  onClose,
+  onInvoiceCreated,
+  invoiceToEdit,
+}) {
+  const [title, setTitle] = useState(invoiceToEdit?.title || "");
+  const [number, setNumber] = useState(invoiceToEdit?.number || "");
+  const [paymentTerms, setPaymentTerms] = useState(
+    invoiceToEdit?.paymentTerms || "30 dagar",
+  );
 
-  const [customerName, setCustomerName] = useState("");
-  const [customerAddress, setCustomerAddress] = useState("");
-  const [customerOrgNr, setCustomerOrgNr] = useState("");
+  const initialDate = invoiceToEdit?.dueDate
+    ? new Date(invoiceToEdit.dueDate).toISOString().split("T")[0]
+    : "";
+  const [dueDate, setDueDate] = useState(initialDate);
 
-  // NYTT: State för Referens och Kommentarer
-  const [reff, setReff] = useState("");
-  const [notes, setNotes] = useState("");
+  const [vatRate, setVatRate] = useState(
+    invoiceToEdit?.vatRate?.toString() || "25",
+  );
+
+  const [lateFee, setLateFee] = useState(
+    invoiceToEdit?.defaultInterest?.toString() || "8",
+  );
+
+  const [customerName, setCustomerName] = useState(
+    invoiceToEdit?.customerName || "",
+  );
+  const [customerAddress, setCustomerAddress] = useState(
+    invoiceToEdit?.customerAddress || "",
+  );
+  const [customerOrgNr, setCustomerOrgNr] = useState(
+    invoiceToEdit?.customerOrgNr || "",
+  );
+  const [reff, setReff] = useState(invoiceToEdit?.reff || "");
+  const [notes, setNotes] = useState(invoiceToEdit?.notes || "");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { getToken } = useAuth();
 
+  const isFirstRender = useRef(true);
+
   useEffect(() => {
+    if (isFirstRender.current && invoiceToEdit) {
+      isFirstRender.current = false;
+      return;
+    }
+
     const days = parseInt(paymentTerms);
 
     if (!isNaN(days)) {
@@ -34,7 +61,7 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
 
       setDueDate(`${yyyy}-${mm}-${dd}`);
     }
-  }, [paymentTerms]);
+  }, [paymentTerms, invoiceToEdit]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,30 +71,38 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
       const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
       const token = await getToken();
 
-      const response = await axios.post(
-        `${API_URL}/api/invoices`,
-        {
-          title,
-          number,
-          paymentTerms,
-          dueDate,
-          vatRate: Number(vatRate),
-          lateFee: Number(lateFee),
-          customerName,
-          customerAddress,
-          customerOrgNr,
-          reff, 
-          notes, 
-        },
-        {
+      const invoiceData = {
+        title,
+        number,
+        paymentTerms,
+        dueDate,
+        vatRate: Number(vatRate),
+        lateFee: Number(lateFee),
+        customerName,
+        customerAddress,
+        customerOrgNr,
+        reff,
+        notes,
+      };
+
+      let response;
+
+      if (invoiceToEdit) {
+        response = await axios.put(
+          `${API_URL}/api/invoices/${invoiceToEdit.id}`,
+          invoiceData,
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+      } else {
+        response = await axios.post(`${API_URL}/api/invoices`, invoiceData, {
           headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+        });
+      }
 
       onInvoiceCreated(response.data);
       onClose();
     } catch (error) {
-      console.error("Kunde inte skapa faktura:", error);
+      console.error("Kunde inte spara fakturan:", error);
       alert("Något gick fel när fakturan skulle sparas.");
     } finally {
       setIsSubmitting(false);
@@ -78,7 +113,9 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl my-8 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white z-10">
-          <h2 className="text-xl font-bold text-gray-800">Skapa ny faktura</h2>
+          <h2 className="text-xl font-bold text-gray-800">
+            {invoiceToEdit ? "Ändra faktura" : "Skapa ny faktura"}
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
@@ -88,7 +125,6 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* FAKTURADETALJER */}
           <div>
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider border-b pb-2 mb-4">
               Fakturadetaljer
@@ -182,7 +218,6 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
             </div>
           </div>
 
-          {/* KUNDUPPGIFTER */}
           <div>
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider border-b pb-2 mb-4 mt-6">
               Kunduppgifter
@@ -235,6 +270,7 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
                     value={reff}
                     onChange={(e) => setReff(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    placeholder="T.ex. Anna Andersson"
                   />
                 </div>
               </div>
@@ -254,6 +290,7 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                placeholder="Skriv eventuella kommentarer eller villkor här..."
               />
             </div>
           </div>
@@ -271,7 +308,11 @@ export default function InvoiceForm({ onClose, onInvoiceCreated }) {
               disabled={isSubmitting}
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50"
             >
-              {isSubmitting ? "Sparar..." : "Spara faktura"}
+              {isSubmitting
+                ? "Sparar..."
+                : invoiceToEdit
+                  ? "Spara ändringar"
+                  : "Spara faktura"}
             </button>
           </div>
         </form>

@@ -124,3 +124,63 @@ export const addItemToInvoice = async (req, res) => {
     res.status(400).json({ error: "Kunde inte skapa fakturaraden." });
   }
 };
+
+export const deleteInvoice = async (req, res) => {
+  const { userId } = getAuth(req);
+
+  try {
+    const { id } = req.params;
+
+    const invoice = await prisma.invoice.findUnique({
+      where: { id: Number(id) },
+    });
+
+    if (!invoice) {
+      return res.status(404).json({ error: "Fakturan hittades inte." });
+    }
+
+    if (invoice.clerkUserID !== userId) {
+      return res.status(403).json({ error: "Obehörig åtgärd." });
+    }
+
+    await prisma.invoice.delete({
+      where: { id: Number(id) },
+    });
+
+    res.status(200).json({ message: "Fakturan har raderats." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Kunde inte radera fakturan." });
+  }
+};
+
+export const updateInvoice = async (req, res) => {
+  const { userId } = getAuth(req);
+
+  try {
+    const { id } = req.params;
+    const dataToUpdate = req.body;
+
+    const invoice = await prisma.invoice.findUnique({
+      where: { id: Number(id) },
+    });
+
+    if (!invoice || invoice.clerkUserID !== userId) {
+      return res.status(403).json({ error: "Obehörig eller hittades inte." });
+    }
+
+    if (dataToUpdate.dueDate) {
+      dataToUpdate.dueDate = new Date(dataToUpdate.dueDate);
+    }
+
+    const updatedInvoice = await prisma.invoice.update({
+      where: { id: Number(id) },
+      data: dataToUpdate,
+    });
+
+    res.status(200).json(updatedInvoice);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Kunde inte uppdatera fakturan." });
+  }
+};

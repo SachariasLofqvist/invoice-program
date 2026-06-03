@@ -5,6 +5,8 @@ import {
   createInvoice,
   getInvoiceById,
   addItemToInvoice,
+  deleteInvoice,
+  updateInvoice,
 } from "../controllers/invoiceContoller.js";
 
 const router = express.Router();
@@ -27,5 +29,7 @@ router.get("/", requireLogin, getInvoices);
 router.post("/", requireLogin, createInvoice);
 router.get("/:id", requireLogin, getInvoiceById);
 router.post("/:id/items", requireLogin, addItemToInvoice);
+router.put("/:id", requireLogin, updateInvoice);
+router.delete("/:id", requireLogin, deleteInvoice);
 
 export default router;

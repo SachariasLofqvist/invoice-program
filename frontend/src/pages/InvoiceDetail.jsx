@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
+import InvoiceForm from "../components/InvoiceForm";
 
 export default function InvoiceDetail() {
   const { id } = useParams();
@@ -9,6 +10,7 @@ export default function InvoiceDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { getToken } = useAuth();
+  const navigate = useNavigate();
 
   const myBank = import.meta.env.VITE_COMPANY_BANK;
   const clearing = import.meta.env.VITE_COMPANY_CLEARING;
@@ -26,6 +28,8 @@ export default function InvoiceDetail() {
   const [itemQuantity, setItemQuantity] = useState(1);
   const [itemPrice, setItemPrice] = useState("");
   const [isAddingItem, setIsAddingItem] = useState(false);
+
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const fetchInvoiceDetails = async () => {
@@ -45,6 +49,10 @@ export default function InvoiceDetail() {
     };
     fetchInvoiceDetails();
   }, [id, getToken]);
+
+  const handleInvoiceUpdated = (updatedInvoice) => {
+    setInvoice({ ...updatedInvoice, items: invoice.items });
+  };
 
   const handleAddItem = async (e) => {
     e.preventDefault();
@@ -67,6 +75,28 @@ export default function InvoiceDetail() {
       alert("Det gick inte att lägga till fakturaraden.");
     } finally {
       setIsAddingItem(false);
+    }
+  };
+
+  const handleDeleteInvoice = async () => {
+    const confirmDelete = window.confirm(
+      "Är du helt säker på att du vill radera denna faktura? Detta går inte att ångra.",
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+      const token = await getToken();
+
+      await axios.delete(`${API_URL}/api/invoices/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      alert("Något gick fel, fakturan kunde inte raderas.");
     }
   };
 
@@ -106,12 +136,28 @@ export default function InvoiceDetail() {
         >
           &larr; Tillbaka till översikten
         </Link>
-        <button
-          onClick={handlePrint}
-          className="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-md font-semibold shadow-sm cursor-pointer"
-        >
-          Spara som PDF
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={handleDeleteInvoice}
+            className="bg-white border border-red-200 hover:bg-red-50 text-red-600 px-5 py-2.5 rounded-md font-semibold shadow-sm transition-colors cursor-pointer"
+          >
+            Ta bort
+          </button>
+
+          <button
+            onClick={() => setIsEditing(true)}
+            className="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-5 py-2.5 rounded-md font-semibold shadow-sm transition-colors cursor-pointer"
+          >
+            Ändra
+          </button>
+
+          <button
+            onClick={handlePrint}
+            className="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-md font-semibold shadow-sm cursor-pointer"
+          >
+            Spara som PDF
+          </button>
+        </div>
       </div>
 
       <div className="max-w-[210mm] mx-auto bg-white p-[20mm] shadow-lg min-h-[297mm] flex flex-col print:shadow-none print:p-[10mm] print:min-h-[297mm] print:m-0">
@@ -380,6 +426,14 @@ export default function InvoiceDetail() {
           </form>
         </div>
       </div>
+
+      {isEditing && (
+        <InvoiceForm
+          invoiceToEdit={invoice}
+          onClose={() => setIsEditing(false)}
+          onInvoiceCreated={handleInvoiceUpdated}
+        />
+      )}
     </div>
   );
 }
