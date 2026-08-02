@@ -7,8 +7,12 @@ import helmet from "helmet";
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+const allowedOrigins = process.env.FRONTEND_URL 
+  ? process.env.FRONTEND_URL.split(",") 
+  : ["http://localhost:5173"];
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL,
+  origin: allowedOrigins,
   optionsSuccessStatus: 200,
   credentials: true,
 };
