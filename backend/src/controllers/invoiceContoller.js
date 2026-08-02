@@ -4,6 +4,8 @@ import { prisma } from "../../lib/prisma.js";
 export const getInvoices = async (req, res) => {
   const { userId } = getAuth(req);
 
+  console.log("Clerk ID som begär fakturor:", userId);
+
   try {
     const invoices = await prisma.invoice.findMany({
       where: {
