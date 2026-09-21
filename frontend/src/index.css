@@ -1,7 +1,12 @@
 @import "tailwindcss";
+@import url('https://googleapis.com');
 
 @media print {
   @page {
     margin: 0;
   }
+}
+
+@theme {
+  --font-abril: "Abril Fatface", serif;
 }

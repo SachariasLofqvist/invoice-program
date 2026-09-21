@@ -5,7 +5,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-[#FAFAF8] text-stone-800 font-sans selection:bg-amber-200">
       
       <header className="max-w-6xl mx-auto px-6 py-8 flex justify-between items-center">
-        <div className="text-2xl font-bold tracking-tight text-stone-900">
+        <div className="font-abril text-4xl tracking-tight text-stone-900">
           noviorum.
         </div>
         <nav className="flex items-center gap-4">
