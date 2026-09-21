@@ -10,13 +10,8 @@ export default function LandingPage() {
         </div>
         <nav className="flex items-center gap-4">
           <SignInButton mode="modal">
-            <button className="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors focus:outline-none focus:ring-2 focus:ring-stone-200 rounded-md px-2 py-1">
-              Login
-            </button>
-          </SignInButton>
-          <SignInButton mode="modal">
             <button className="text-sm font-medium bg-stone-900 text-white px-5 py-2.5 rounded-full hover:bg-stone-700 transition-all focus:outline-none focus:ring-2 focus:ring-stone-500 focus:ring-offset-2 focus:ring-offset-[#FAFAF8]">
-              Get started
+              Login
             </button>
           </SignInButton>
         </nav>
@@ -32,7 +27,7 @@ export default function LandingPage() {
         
         <SignInButton mode="modal">
           <button className="text-base font-medium bg-amber-700 text-white px-8 py-4 rounded-full hover:bg-amber-800 transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-[#FAFAF8]">
-            Create your account
+            Contact us!
           </button>
         </SignInButton>
       </main>
