@@ -3,13 +3,15 @@ import { SignedIn, SignedOut, SignIn, UserButton } from "@clerk/clerk-react";
 import Dashboard from "./pages/Dashboard";
 import InvoiceForm from "./components/InvoiceForm";
 import InvoiceDetail from "./pages/InvoiceDetail";
+import LandingPage from "./pages/LandingPage";
+
 
 export default function App() {
   return (
     <>
       <SignedIn>
         <BrowserRouter>
-          <div className="fixed top-4 right-4 z-9999 print:hidden">
+          <div className="fixed top-4 right-4 z-50 print:hidden">
             <UserButton />
           </div>
 
@@ -22,14 +24,7 @@ export default function App() {
       </SignedIn>
 
       <SignedOut>
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">
-              Invoice app
-            </h1>
-            <SignIn />
-          </div>
-        </div>
+        <LandingPage/>
       </SignedOut>
     </>
   );
