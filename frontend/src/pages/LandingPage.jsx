@@ -6,7 +6,7 @@ export default function LandingPage() {
       
       <header className="max-w-6xl mx-auto px-6 py-8 flex justify-between items-center">
         <div className="font-abril text-4xl tracking-tight text-stone-900">
-          noviorum.
+          NOVIORUM
         </div>
         <nav className="flex items-center gap-4">
           <SignInButton mode="modal">
